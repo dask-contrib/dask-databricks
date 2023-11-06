@@ -1,12 +1,12 @@
 import click
 
-@click.group
+@click.group(name="databricks")
 def main():
-    """Subcommands to launch Dask on Databricks."""
+    """Tools to launch Dask on Databricks."""
 
 @main.command()
 def run():
-    """Run a databricks cluster"""
+    """Run Dask processes on a Databricks cluster."""
     print("I am going to run a cluster.")
 
 if __name__ == "__main__":
