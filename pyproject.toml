@@ -23,7 +23,9 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "dask"
+  "click",
+  "dask",
+  "rich"
 ]
 
 [project.urls]
