@@ -8,12 +8,11 @@ import time
 
 from rich.logging import RichHandler
 
-FORMAT = "%(message)s"
-logging.basicConfig(
-    level="INFO", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
-)
-
-log = logging.getLogger("dask_databricks")
+def get_logger():
+    logging.basicConfig(
+        level="INFO", format="%(message)s", datefmt="[%X]", handlers=[RichHandler()]
+    )
+    return logging.getLogger("dask_databricks")
 
 @click.group(name="databricks")
 def main():
@@ -22,6 +21,7 @@ def main():
 @main.command()
 def run():
     """Run Dask processes on a Databricks cluster."""
+    log = get_logger()
 
     log.info("Setting up Dask on a Databricks cluster.")
 
