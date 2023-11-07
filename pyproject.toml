@@ -25,7 +25,8 @@ classifiers = [
 dependencies = [
   "click",
   "dask",
-  "rich"
+  "rich",
+  "distributed",
 ]
 
 [project.urls]
@@ -35,6 +36,12 @@ Source = "https://github.com/dask-contrib/dask-databricks"
 
 [project.entry-points.dask_cli]
 databricks = "dask_databricks.cli:main"
+
+[tool]
+rye = { dev-dependencies = [
+    "ipy>=1.1",
+    "pytest>=7.4.3",
+] }
 
 [tool.hatch.version]
 path = "dask_databricks/__about__.py"
