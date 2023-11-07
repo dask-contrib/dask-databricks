@@ -1,4 +1,5 @@
 import os
+import uuid
 
 from distributed.deploy.cluster import Cluster
 from distributed.core import rpc
@@ -15,11 +16,14 @@ class DatabricksCluster(Cluster):
     def __init__(self,
         loop: Optional[IOLoop] = None,
         asynchronous: bool = False,):
-        self.spark_local_ip =  os.getenv("SPARK_LOCAL_IP")
-        if spark is None or self.spark_local_ip is None:
+        self.spark_local_ip = os.getenv("SPARK_LOCAL_IP")
+        if self.spark_local_ip is None:
             raise KeyError("Unable to find expected environment variable SPARK_LOCAL_IP. "
                            "Are you running this on a Databricks driver node?")
-        name = spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
+        try:
+            name = spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
+        except AttributeError:
+            name = "unknown-databricks-" + uuid.uuid4().hex[:10]
         super().__init__(name=name, loop=loop, asynchronous=asynchronous)
 
         if not self.called_from_running_loop:
