@@ -1,4 +1,3 @@
-import click
 import logging
 import os
 import socket
@@ -6,17 +5,19 @@ import subprocess
 import sys
 import time
 
+import click
 from rich.logging import RichHandler
 
+
 def get_logger():
-    logging.basicConfig(
-        level="INFO", format="%(message)s", datefmt="[%X]", handlers=[RichHandler()]
-    )
+    logging.basicConfig(level="INFO", format="%(message)s", datefmt="[%X]", handlers=[RichHandler()])
     return logging.getLogger("dask_databricks")
+
 
 @click.group(name="databricks")
 def main():
     """Tools to launch Dask on Databricks."""
+
 
 @main.command()
 def run():
@@ -25,12 +26,14 @@ def run():
 
     log.info("Setting up Dask on a Databricks cluster.")
 
-    DB_IS_DRIVER = os.getenv('DB_IS_DRIVER')
-    DB_DRIVER_IP = os.getenv('DB_DRIVER_IP')
+    DB_IS_DRIVER = os.getenv("DB_IS_DRIVER")
+    DB_DRIVER_IP = os.getenv("DB_DRIVER_IP")
 
     if DB_DRIVER_IP is None or DB_IS_DRIVER is None:
-        log.error("Unable to find expected environment variables DB_IS_DRIVER and DB_DRIVER_IP. "
-                   "Are you running this command on a Databricks multi-node cluster?")
+        log.error(
+            "Unable to find expected environment variables DB_IS_DRIVER and DB_DRIVER_IP. "
+            "Are you running this command on a Databricks multi-node cluster?"
+        )
         sys.exit(1)
 
     if DB_IS_DRIVER == "TRUE":

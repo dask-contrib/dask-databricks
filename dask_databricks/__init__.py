@@ -2,4 +2,4 @@
 #
 # SPDX-License-Identifier: BSD-3
 
-from .databrickscluster import DatabricksCluster, get_client
+from .databrickscluster import DatabricksCluster, get_client  # noqa

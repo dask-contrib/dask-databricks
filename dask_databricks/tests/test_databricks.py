@@ -4,13 +4,14 @@ import pytest
 from dask.distributed import Client
 from distributed.deploy import Cluster, LocalCluster
 
-
 from dask_databricks import DatabricksCluster, get_client
+
 
 @pytest.fixture(scope="session")
 def dask_cluster():
     """Start a LocalCluster to simulate the cluster that would be started on Databricks."""
     return LocalCluster(scheduler_port=8786)
+
 
 @pytest.fixture
 def remove_spark_local_ip():
@@ -20,6 +21,7 @@ def remove_spark_local_ip():
     yield None
     if original_spark_local_ip:
         os.environ["SPARK_LOCAL_IP"] = original_spark_local_ip
+
 
 @pytest.fixture
 def set_spark_local_ip():
@@ -31,9 +33,11 @@ def set_spark_local_ip():
     else:
         del os.environ["SPARK_LOCAL_IP"]
 
+
 def test_databricks_cluster_raises_key_error_when_initialised_outside_of_databricks(remove_spark_local_ip):
     with pytest.raises(KeyError):
         DatabricksCluster()
+
 
 def test_databricks_cluster_create(set_spark_local_ip, dask_cluster):
     cluster = DatabricksCluster()
