@@ -39,6 +39,7 @@ class DatabricksCluster(Cluster):
         self.scheduler_comm = rpc(f"{self.spark_local_ip}:8786")
         await super()._start()
 
+    @property
     def dashboard_link(self):
         if spark is None:
             raise RuntimeError("Unable to locate spark session. Are you running this on a Databricks driver node?")
