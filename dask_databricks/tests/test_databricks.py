@@ -5,7 +5,7 @@ from dask.distributed import Client
 from distributed.deploy import Cluster, LocalCluster
 
 
-from dask_databricks import DatabricksCluster
+from dask_databricks import DatabricksCluster, get_client
 
 @pytest.fixture(scope="session")
 def dask_cluster():
@@ -44,4 +44,11 @@ def test_databricks_cluster_create_client(set_spark_local_ip, dask_cluster):
     cluster = DatabricksCluster()
     client = Client(cluster)
     assert isinstance(client, Client)
+    assert client.submit(sum, (10, 1)).result() == 11
+
+
+def test_get_client(set_spark_local_ip, dask_cluster):
+    client = get_client()
+    assert isinstance(client, Client)
+    assert isinstance(client.cluster, DatabricksCluster)
     assert client.submit(sum, (10, 1)).result() == 11
