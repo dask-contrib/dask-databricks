@@ -6,8 +6,12 @@ from distributed.core import rpc
 from distributed.deploy.cluster import Cluster
 from tornado.ioloop import IOLoop
 
-# Databricks Notebooks injects the `spark` session variable
-if "spark" not in globals():
+# Databricks Notebooks injects the `spark` session variable but we need to create it ourselves
+try:
+    from pyspark.sql import SparkSession
+
+    spark = SparkSession.getActiveSession()
+except ImportError:
     spark = None
 
 
@@ -41,8 +45,6 @@ class DatabricksCluster(Cluster):
 
     @property
     def dashboard_link(self):
-        if spark is None:
-            raise RuntimeError("Unable to locate spark session. Are you running this on a Databricks driver node?")
         cluster_id = spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
         org_id = spark.conf.get("spark.databricks.clusterUsageTags.orgId")
         return f"https://dbc-dp-{org_id}.cloud.databricks.com/driver-proxy/o/{org_id}/{cluster_id}/8087/status"
