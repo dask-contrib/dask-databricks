@@ -45,7 +45,7 @@ class DatabricksCluster(Cluster):
             raise RuntimeError("Unable to locate spark session. Are you running this on a Databricks driver node?")
         cluster_id = spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
         org_id = spark.conf.get("spark.databricks.clusterUsageTags.orgId")
-        return f"https://dbc-dp-{org_id}.cloud.databricks.com/driver-proxy/o/{org_id}/{cluster_id}/8265/status"
+        return f"https://dbc-dp-{org_id}.cloud.databricks.com/driver-proxy/o/{org_id}/{cluster_id}/8087/status"
 
 
 def get_client():
