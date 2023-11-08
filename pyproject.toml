@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
@@ -47,7 +47,10 @@ rye = { dev-dependencies = [
 allow-direct-references = true
 
 [tool.hatch.version]
-path = "dask_databricks/__about__.py"
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "dask_databricks/_version.py"
 
 [tool.hatch.envs.default]
 dependencies = [
