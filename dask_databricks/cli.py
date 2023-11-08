@@ -38,7 +38,7 @@ def run():
 
     if DB_IS_DRIVER == "TRUE":
         log.info("This node is the Dask scheduler.")
-        subprocess.Popen(["dask", "scheduler", "--dashboard-prefix", "", "--dashboard-address", ":8787,:8087"])
+        subprocess.Popen(["bash", "-c", "dask scheduler --dashboard-prefix '' --dashboard-address :8787,:8087"])
     else:
         log.info("This node is a Dask worker.")
         log.info(f"Connecting to Dask scheduler at {DB_DRIVER_IP}:8786")
