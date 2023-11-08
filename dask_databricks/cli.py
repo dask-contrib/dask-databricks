@@ -58,7 +58,7 @@ def run(worker_command, worker_args):
         worker_command = worker_command.split() if worker_command else ["dask", "worker"]
         if worker_args:
             worker_command.extend(worker_args.split())
-            
+
         worker_command.append(f"tcp://{DB_DRIVER_IP}:8786")
 
         subprocess.Popen(worker_command)
