@@ -17,14 +17,12 @@ To launch a Dask cluster on Databricks you need to create an [init script](https
 dask databricks run
 ```
 
-Then from your Databricks Notebook you can use the `DatabricksCluster` class to quickly connect a Dask `Client` to the scheduler running on the Spark Driver Node.
+Then from your Databricks Notebook you can quickly connect a Dask `Client` to the scheduler running on the Spark Driver Node.
 
 ```python
-from dask.distributed import Client
-from dask_databricks import DatabricksCluster
+import dask_databricks
 
-cluster = DatabricksCluster()
-client = Client(cluster)
+client = dask_databricks.get_client()
 ```
 
 Now you can submit work from your notebook to the multi-node Dask cluster.

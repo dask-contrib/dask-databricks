@@ -34,3 +34,7 @@ class DatabricksCluster(Cluster):
     async def _start(self):
         self.scheduler_comm = rpc(f'{self.spark_local_ip}:8786')
         await super()._start()
+
+def get_client():
+    """Get a Dask client connected to a Databricks cluster."""
+    return DatabricksCluster().get_client()
