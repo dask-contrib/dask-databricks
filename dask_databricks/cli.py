@@ -61,6 +61,8 @@ def run(worker_command, worker_args):
                 log.info("Scheduler not available yet. Waiting...")
                 time.sleep(1)
 
+        # Construct the worker command
+        worker_command = worker_command.split() if worker_command else ["dask", "worker"]
         if worker_args:
             try:
                 # Try to decode the JSON-encoded worker_args
@@ -72,9 +74,7 @@ def run(worker_command, worker_args):
                 # TODO: Are there other cases to account for?
                 worker_args_list = worker_args.split()
 
-        # Construct the worker command
-        worker_command = worker_command.split() if worker_command else ["dask", "worker"]
-        worker_command.extend(worker_args_list)
+            worker_command.extend(worker_args_list)
         worker_command.append(f"tcp://{DB_DRIVER_IP}:{worker_port}")
 
         subprocess.Popen(worker_command)
