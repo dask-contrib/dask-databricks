@@ -41,14 +41,20 @@ def run(worker_command, worker_args):
 
     if DB_IS_DRIVER == "TRUE":
         log.info("This node is the Dask scheduler.")
-        subprocess.Popen(["dask", "scheduler", "--dashboard-address", ":8787,:8087"])
+        scheduler_process = subprocess.Popen(["dask", "scheduler", "--dashboard-address", ":8787,:8087"])
+        time.sleep(5)  # Sleep for 5 seconds to give the scheduler time to start
+        if scheduler_process.poll() is not None:
+            log.error("Scheduler process has exited.")
+            sys.exit(1)
     else:
+        # Specify the same port for all workers
+        worker_port = 8786
         log.info("This node is a Dask worker.")
-        log.info(f"Connecting to Dask scheduler at {DB_DRIVER_IP}:8786")
+        log.info(f"Connecting to Dask scheduler at {DB_DRIVER_IP}:{worker_port}")
         while True:
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.connect((DB_DRIVER_IP, 8786))
+                sock.connect((DB_DRIVER_IP, worker_port))
                 sock.close()
                 break
             except ConnectionRefusedError:
@@ -63,12 +69,13 @@ def run(worker_command, worker_args):
                     raise ValueError("The JSON-encoded worker_args must be a list.")
             except json.JSONDecodeError:
                 # If decoding as JSON fails, split worker_args by spaces
+                # TODO: Are there other cases to account for?
                 worker_args_list = worker_args.split()
 
         # Construct the worker command
         worker_command = worker_command.split() if worker_command else ["dask", "worker"]
         worker_command.extend(worker_args_list)
-        worker_command.append(f"tcp://{DB_DRIVER_IP}:8786")
+        worker_command.append(f"tcp://{DB_DRIVER_IP}:{worker_port}")
 
         subprocess.Popen(worker_command)
 
