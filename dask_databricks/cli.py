@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import socket
@@ -21,7 +22,7 @@ def main():
 
 @main.command()
 @click.option('--worker-command', help='Custom worker command')
-@click.option('--worker-args', help='Additional worker arguments as a single string')
+@click.option('--worker-args', help='Additional worker arguments')
 def run(worker_command, worker_args):
     """Run Dask processes on a Databricks cluster."""
     log = get_logger()
@@ -54,11 +55,19 @@ def run(worker_command, worker_args):
                 log.info("Scheduler not available yet. Waiting...")
                 time.sleep(1)
 
+        if worker_args:
+            try:
+                # Try to decode the JSON-encoded worker_args
+                worker_args_list = json.loads(worker_args)
+                if not isinstance(worker_args_list, list):
+                    raise ValueError("The JSON-encoded worker_args must be a list.")
+            except json.JSONDecodeError:
+                # If decoding as JSON fails, split worker_args by spaces
+                worker_args_list = worker_args.split()
+
         # Construct the worker command
         worker_command = worker_command.split() if worker_command else ["dask", "worker"]
-        if worker_args:
-            worker_command.extend(worker_args.split())
-            
+        worker_command.extend(worker_args_list)
         worker_command.append(f"tcp://{DB_DRIVER_IP}:8786")
 
         subprocess.Popen(worker_command)
