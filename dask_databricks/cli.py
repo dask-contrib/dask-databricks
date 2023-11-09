@@ -23,7 +23,14 @@ def main():
 @main.command()
 @click.option('--worker-command', help='Custom worker command')
 @click.option('--worker-args', help='Additional worker arguments')
-def run(worker_command, worker_args):
+@click.option(
+    "--cuda",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Use `dask cuda worker` from the dask-cuda package when starting workers.",
+)
+def run(worker_command, worker_args, cuda):
     """Run Dask processes on a Databricks cluster."""
     log = get_logger()
 
@@ -44,7 +51,7 @@ def run(worker_command, worker_args):
         scheduler_process = subprocess.Popen(["dask", "scheduler", "--dashboard-address", ":8787,:8087"])
         time.sleep(5)  # give the scheduler time to start
         if scheduler_process.poll() is not None:
-            log.error("Scheduler process has exited.")
+            log.error("Scheduler process has exited prematurely.")
             sys.exit(1)
     else:
         # Specify the same port for all workers
@@ -62,7 +69,13 @@ def run(worker_command, worker_args):
                 time.sleep(1)
 
         # Construct the worker command
-        worker_command = worker_command.split() if worker_command else ["dask", "worker"]
+        if worker_command:
+            worker_command = worker_command.split()
+        elif cuda:
+            worker_command = ["dask", "cuda", "worker"]
+        else:
+            worker_command = ["dask", "worker"]
+
         if worker_args:
             try:
                 # Try to decode the JSON-encoded worker_args
@@ -71,31 +84,16 @@ def run(worker_command, worker_args):
                     raise ValueError("The JSON-encoded worker_args must be a list.")
             except json.JSONDecodeError:
                 # If decoding as JSON fails, split worker_args by spaces
-                # TODO: Are there other cases to account for?
                 worker_args_list = worker_args.split()
 
             worker_command.extend(worker_args_list)
         worker_command.append(f"tcp://{DB_DRIVER_IP}:{worker_port}")
 
-        subprocess.Popen(worker_command)
-
-        # # Start the worker subprocess and capture its output
-        # log.info("Starting the worker...")
-        # worker_process = subprocess.Popen(worker_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-
-        # # Watch the worker's stdout for "Start worker at:" log line
-        # while True:
-        #     line = worker_process.stdout.readline()
-        #     if not line:
-        #         break  # If there's no more output, the worker process has finished
-        #     if "Start worker at:" in line:
-        #         # Log the message
-        #         log.info(line.strip())
-        #         break  # Exit the loop after capturing the message
-
-        # return_code = worker_process.poll()
-        # if return_code is not None:
-        #     log.info(f"Worker process has exited with return code {return_code}")
+        worker_process = subprocess.Popen(worker_command)
+        time.sleep(5)  # give the worker time to start
+        if worker_process.poll() is not None:
+            log.error("Worker process has exited prematurely.")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
