@@ -54,5 +54,27 @@ def run():
         subprocess.Popen(["dask", "worker", f"tcp://{DB_DRIVER_IP}:8786"])
 
 
+@main.group()
+def logs():
+    """View cluster init logs."""
+
+
+@logs.command()
+@click.argument("path")
+def ls(path):
+    try:
+        from databricks.sdk.runtime import dbutils
+    except ImportError:
+        raise RuntimeError("Please install databricks-sdk.")
+
+    log_files = []
+    for cluster in dbutils.fs.ls(path):
+        for node in dbutils.fs.ls(cluster.path + "/init_scripts"):
+            for log in dbutils.fs.ls(node.path):
+                log_files.append(log.path)
+    for log in sorted(log_files, key=lambda x: x.split("/")[-1]):
+        print(log)
+
+
 if __name__ == "__main__":
     main()
