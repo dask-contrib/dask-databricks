@@ -42,7 +42,7 @@ def run(worker_command, worker_args):
     if DB_IS_DRIVER == "TRUE":
         log.info("This node is the Dask scheduler.")
         scheduler_process = subprocess.Popen(["dask", "scheduler", "--dashboard-address", ":8787,:8087"])
-        time.sleep(5)  # Sleep for 5 seconds to give the scheduler time to start
+        time.sleep(5)  # give the scheduler time to start
         if scheduler_process.poll() is not None:
             log.error("Scheduler process has exited.")
             sys.exit(1)
@@ -78,6 +78,24 @@ def run(worker_command, worker_args):
         worker_command.append(f"tcp://{DB_DRIVER_IP}:{worker_port}")
 
         subprocess.Popen(worker_command)
+
+        # # Start the worker subprocess and capture its output
+        # log.info("Starting the worker...")
+        # worker_process = subprocess.Popen(worker_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
+        # # Watch the worker's stdout for "Start worker at:" log line
+        # while True:
+        #     line = worker_process.stdout.readline()
+        #     if not line:
+        #         break  # If there's no more output, the worker process has finished
+        #     if "Start worker at:" in line:
+        #         # Log the message
+        #         log.info(line.strip())
+        #         break  # Exit the loop after capturing the message
+
+        # return_code = worker_process.poll()
+        # if return_code is not None:
+        #     log.info(f"Worker process has exited with return code {return_code}")
 
 
 if __name__ == "__main__":
