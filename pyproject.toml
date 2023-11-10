@@ -23,6 +23,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
+  "bokeh<=3.2.2",  # Necessary until https://github.com/dask/distributed/issues/8333 is resolved
   "click>=8.1",
   "dask",
   "rich",
