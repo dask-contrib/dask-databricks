@@ -11,7 +11,7 @@ To launch a Dask cluster on Databricks you need to create an [init script](https
 #!/bin/bash
 
 # Install Dask + Dask Databricks
-/databricks/python/bin/pip install --upgrade dask[complete] git+https://github.com/jacobtomlinson/dask-databricks.git@main
+/databricks/python/bin/pip install --upgrade dask[complete] dask-databricks
 
 # Start Dask cluster components
 dask databricks run
@@ -79,4 +79,18 @@ Start time: Nov 16 2023 10:36
 10.0.0.1: Start Python bootstrap
 10.0.0.1: PYSPARK_PYTHON is /databricks/python3/bin/python
 ...
+```
+
+## Releasing
+
+Releases of this project are automated using [GitHub Actions and the `pypa/gh-action-pypi-publish` action](https://github.com/jacobtomlinson/dask-databricks/blob/main/.github/workflows/release.yaml).
+
+To create a new release push a tag to the upstream repo in the format `x.x.x`. The package will be built and pushed to PyPI automatically and then later picked up by conda-forge.
+
+```bash
+# Make sure you have an upstream remote
+git remote add upstream git@github.com:jacobtomlinson/dask-databricks.git
+
+# Create a tag and push it upstream
+git tag x.x.x && git push upstream main --tags
 ```
