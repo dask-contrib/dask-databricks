@@ -48,7 +48,7 @@ def run(worker_command, worker_args, cuda):
 
     if DB_IS_DRIVER == "TRUE":
         log.info("This node is the Dask scheduler.")
-        scheduler_process = subprocess.Popen(["dask", "scheduler", "--dashboard-address", ":8787,:8087"])
+        scheduler_process = subprocess.Popen(["dask", "scheduler", "--dashboard-address", ":8087"])
         time.sleep(5)  # give the scheduler time to start
         if scheduler_process.poll() is not None:
             log.error("Scheduler process has exited prematurely.")
