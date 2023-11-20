@@ -50,13 +50,13 @@ https://dbc-dp-xxxx.cloud.databricks.com/driver-proxy/o/xxxx/xx-xxx-xxxx/8087/st
 
 ## Releasing
 
-Releases of this project are automated using [GitHub Actions and the `pypa/gh-action-pypi-publish` action](https://github.com/jacobtomlinson/dask-databricks/blob/main/.github/workflows/release.yaml).
+Releases of this project are automated using [GitHub Actions and the `pypa/gh-action-pypi-publish` action](https://github.com/dask-contrib/dask-databricks/blob/main/.github/workflows/release.yaml).
 
 To create a new release push a tag to the upstream repo in the format `x.x.x`. The package will be built and pushed to PyPI automatically and then later picked up by conda-forge.
 
 ```bash
 # Make sure you have an upstream remote
-git remote add upstream git@github.com:jacobtomlinson/dask-databricks.git
+git remote add upstream git@github.com:dask-contrib/dask-databricks.git
 
 # Create a tag and push it upstream
 git tag x.x.x && git push upstream main --tags
